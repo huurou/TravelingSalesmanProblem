@@ -18,7 +18,7 @@ namespace TravelingSalesmanProblem.Domain.Envs
 
         internal void Set(int pointCount)
         {
-            Points = new(Enumerable.Range(0, pointCount).Select(_ => new Point(rand_.Next(WIDTH), rand_.Next(HEIGHT))));
+            Points = new(Enumerable.Range(0, pointCount).Select(i => new Point(i, rand_.Next(WIDTH), rand_.Next(HEIGHT))));
             PointsChanged?.Invoke(this, new(Points));
         }
     }

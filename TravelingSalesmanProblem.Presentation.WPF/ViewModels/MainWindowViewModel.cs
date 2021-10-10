@@ -48,9 +48,10 @@ namespace TravelingSalesmanProblem.Presentation.WPF.ViewModels
             };
         }
 
-        private void Solve()
+        private async void Solve()
         {
-            appService_.Run();
+            State = "";
+            await appService_.Solve();
             State = $"Finish!\n{State}";
         }
 

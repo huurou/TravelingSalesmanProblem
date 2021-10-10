@@ -26,7 +26,7 @@ namespace TravelingSalesmanProblem.Application
 
         public void SetEnv(int pointCount) => env_.Set(pointCount);
 
-        public async void Run() => await Task.Run(() => solver_.Solve(env_));
+        public async Task Solve() => await Task.Run(() => solver_.Solve(env_));
 
         public void Stop() => solver_.Stop();
     }

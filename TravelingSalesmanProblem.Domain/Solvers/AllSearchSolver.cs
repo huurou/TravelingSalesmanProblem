@@ -7,7 +7,7 @@ using TravelingSalesmanProblem.Domain.Events;
 namespace TravelingSalesmanProblem.Domain.Solvers
 {
     /// <summary>
-    /// 虱潰し法 O(n!)
+    /// 虱潰し法 O((n-1)!/2) = O(n!)
     /// </summary>
     internal class AllSearchSolver : ISolver
     {
@@ -15,25 +15,57 @@ namespace TravelingSalesmanProblem.Domain.Solvers
 
         public void Solve(Env env)
         {
-            var points = env.Points;
             var min = double.PositiveInfinity;
-            var perm = Perm(points);
-            foreach (var element in perm)
+            var all = AllRoute(env.Points.ToList());
+            foreach (var route in all)
             {
-                var d = Point.TotalDistance(element);
+                var d = Point.TotalDistance(route);
                 if (min > d)
                 {
                     min = d;
-                    BestRouteChanged?.Invoke(this, new(element, d));
+                    BestRouteChanged?.Invoke(this, new(route, d));
                 }
             }
         }
 
         public void Stop() => throw new NotImplementedException();
 
-        private IEnumerable<IEnumerable<T>> Perm<T>(IEnumerable<T> items, int? k = null)
+        private static IEnumerable<IEnumerable<Point>> AllRoute(List<Point> points)
         {
-            if (k == null) k = items.Count();
+            var last = points[^1];
+            points.RemoveAt(points.Count - 1);
+            var count = points.Count;
+            return Inner(points);
+
+            IEnumerable<IEnumerable<Point>> Inner(IEnumerable<Point> points, int k = -1)
+            {
+                if (k == -1) k = points.Count();
+                if (k == 0) yield return Enumerable.Empty<Point>();
+                else
+                {
+                    for (var i = 0; i < points.Count(); i++)
+                    {
+                        var xs = points.Where((_, index) => i != index);
+                        foreach (var c in Inner(xs, k - 1))
+                        {
+                            var cc = c.Append(points.ElementAt(i));
+                            if (k == count)
+                            {
+                                if (cc.ElementAt(0).Id < cc.Last().Id) yield return cc.Append(last);
+                            }
+                            else yield return cc;
+                        }
+                    }
+                }
+            }
+        }
+
+        private IEnumerable<IEnumerable<T>> Perm<T>(IEnumerable<T> items, int k = -1)
+        {
+            if (k == -1)
+            {
+                k = items.Count();
+            }
             if (k == 0) yield return Enumerable.Empty<T>();
             else
             {
