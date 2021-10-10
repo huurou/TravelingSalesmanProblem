@@ -4,12 +4,12 @@ using TravelingSalesmanProblem.Application.Envs;
 
 namespace TravelingSalesmanProblem.Application.Events
 {
-    public class BestRouteChangedEventArgs : EventArgs
+    public class BestRouteUpdatedEventArgs : EventArgs
     {
         public List<Point> BestRoute { get; }
         public double TotalDistance { get; }
 
-        public BestRouteChangedEventArgs(List<Point> bestRoute, double totalDistance)
+        public BestRouteUpdatedEventArgs(List<Point> bestRoute, double totalDistance)
         {
             BestRoute = bestRoute;
             TotalDistance = totalDistance;

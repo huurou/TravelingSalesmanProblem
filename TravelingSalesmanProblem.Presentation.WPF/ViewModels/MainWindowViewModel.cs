@@ -1,7 +1,10 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using TravelingSalesmanProblem.Application;
+using TravelingSalesmanProblem.Application.Enums;
 
 namespace TravelingSalesmanProblem.Presentation.WPF.ViewModels
 {
@@ -16,12 +19,23 @@ namespace TravelingSalesmanProblem.Presentation.WPF.ViewModels
         private double totalDistance_;
         private int pointCount_ = 10;
         private string state_ = "";
+        private ObservableCollection<string> solvers_ = new(Enum.GetNames<SolverType>());
+        private int solversIndex_;
 
         public ObservableCollection<Point> Points { get => points_; set => SetProperty(ref points_, value); }
         public ObservableCollection<Point> Route { get => route_; set => SetProperty(ref route_, value); }
         public double TotalDistance { get => totalDistance_; set => SetProperty(ref totalDistance_, value); }
         public int PointCount { get => pointCount_; set => SetProperty(ref pointCount_, value); }
         public string State { get => state_; set => SetProperty(ref state_, value); }
+        public ObservableCollection<string> Solvers { get => solvers_; set => SetProperty(ref solvers_, value); }
+        public int SolversIndex
+        {
+            get => solversIndex_; set
+            {
+                SetProperty(ref solversIndex_, value);
+                SelectSolver(value);
+            }
+        }
 
         #endregion BindingProperty
 
@@ -37,10 +51,12 @@ namespace TravelingSalesmanProblem.Presentation.WPF.ViewModels
 
         #endregion BindingCommand
 
+        private readonly Stopwatch stopwatch_ = new();
+
         internal MainWindowViewModel()
         {
             appService_.PointsChanged += (s, e) => Points = new(e.Points.Select(x => new Point(x.X, x.Y)));
-            appService_.BestRouteChanged += (s, e) =>
+            appService_.BestRouteUpdated += (s, e) =>
             {
                 Route = new(e.BestRoute.Select(x => new Point(x.X, x.Y)));
                 TotalDistance = e.TotalDistance;
@@ -50,16 +66,25 @@ namespace TravelingSalesmanProblem.Presentation.WPF.ViewModels
 
         private async void Solve()
         {
-            State = "";
-            await appService_.Solve();
-            State = $"Finish!\n{State}";
+            stopwatch_.Start();
+            State = "Start!\n";
+            if (await appService_.Solve())
+            {
+                State = $"{stopwatch_.Elapsed}\nFinish!\n{State}";
+                stopwatch_.Reset();
+            }
         }
 
         private void Stop()
         {
-            appService_.Stop();
-            State = $"Stop!\n{State}";
+            if (appService_.Stop())
+            {
+                State = $"{stopwatch_.Elapsed}\nStop!\n{State}";
+                stopwatch_.Reset();
+            }
         }
+
+        private void SelectSolver(int index) => appService_.SelectSolver((SolverType)index);
 
         internal void OnContentRendered() => appService_.SetEnv(PointCount);
     }

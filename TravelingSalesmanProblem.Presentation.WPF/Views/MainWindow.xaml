@@ -45,6 +45,7 @@
                     <ColumnDefinition />
                     <ColumnDefinition />
                     <ColumnDefinition />
+                    <ColumnDefinition />
                 </Grid.ColumnDefinitions>
                 <Button Grid.Column="0" Command="{Binding NewEnvCmd}">New</Button>
                 <TextBlock Grid.Column="1">総距離:<Run Text="{Binding TotalDistance}" /></TextBlock>
@@ -58,6 +59,8 @@
                     <TextBlock Grid.Column="0">都市数</TextBlock>
                     <TextBox Grid.Column="1" VerticalAlignment="Center" Text="{Binding PointCount}" />
                 </Grid>
+                <ComboBox Grid.Column="5" VerticalAlignment="Center"
+                          ItemsSource="{Binding Solvers}" SelectedIndex="{Binding SolversIndex}"/>
             </Grid>
         </Grid>
 

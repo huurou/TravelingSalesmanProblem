@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace TravelingSalesmanProblem.Domain.Envs
 {
@@ -17,14 +16,14 @@ namespace TravelingSalesmanProblem.Domain.Envs
             Y = y;
         }
 
-        internal static double TotalDistance(IEnumerable<Point> points)
+        internal static double TotalDistance(List<Point> points)
         {
             var total = 0D;
-            for (var i = 0; i < points.Count(); i++)
+            for (var i = 0; i < points.Count; i++)
             {
-                total += i == points.Count() - 1
-                    ? Distance(points.ElementAt(i), points.ElementAt(0))
-                    : Distance(points.ElementAt(i), points.ElementAt(i + 1));
+                total += i == points.Count - 1
+                    ? Distance(points[i], points[0])
+                    : Distance(points[i], points[i + 1]);
             }
             return Math.Round(total, 3);
         }
