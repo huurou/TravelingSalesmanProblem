@@ -8,8 +8,17 @@ namespace TravelingSalesmanProblem.Domain.Solvers
     {
         event EventHandler<BestRouteChangedEventArgs>? BestRouteChanged;
 
-        void Solve(Env env);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="env"></param>
+        /// <returns>計算完了/未完了</returns>
+        bool Solve(Env env);
 
-        void Stop();
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns>停止成功/すでに停止中</returns>
+        bool Stop();
     }
 }

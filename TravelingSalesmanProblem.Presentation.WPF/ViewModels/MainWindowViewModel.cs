@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using TravelingSalesmanProblem.Application;
@@ -37,6 +38,8 @@ namespace TravelingSalesmanProblem.Presentation.WPF.ViewModels
 
         #endregion BindingCommand
 
+        private readonly Stopwatch stopwatch_ = new();
+
         internal MainWindowViewModel()
         {
             appService_.PointsChanged += (s, e) => Points = new(e.Points.Select(x => new Point(x.X, x.Y)));
@@ -50,15 +53,22 @@ namespace TravelingSalesmanProblem.Presentation.WPF.ViewModels
 
         private async void Solve()
         {
-            State = "";
-            await appService_.Solve();
-            State = $"Finish!\n{State}";
+            stopwatch_.Start();
+            State = "Start!\n";
+            if (await appService_.Solve())
+            {
+                State = $"{stopwatch_.Elapsed}\nFinish!\n{State}";
+                stopwatch_.Reset();
+            }
         }
 
         private void Stop()
         {
-            appService_.Stop();
-            State = $"Stop!\n{State}";
+            if (appService_.Stop())
+            {
+                State = $"{stopwatch_.Elapsed}\nStop!\n{State}";
+                stopwatch_.Reset();
+            }
         }
 
         internal void OnContentRendered() => appService_.SetEnv(PointCount);
