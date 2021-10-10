@@ -6,8 +6,14 @@ namespace TravelingSalesmanProblem.Domain.Events
 {
     internal class BestRouteChangedEventArgs : EventArgs
     {
-        internal List<Point> BestRoute { get; }
+        internal IEnumerable<Point> BestRoute { get; }
 
-        internal BestRouteChangedEventArgs(List<Point> bestRoute) => BestRoute = bestRoute;
+        internal double TotalDistance { get; }
+
+        public BestRouteChangedEventArgs(IEnumerable<Point> bestRoute, double totalDistance)
+        {
+            BestRoute = bestRoute;
+            TotalDistance = totalDistance;
+        }
     }
 }

@@ -32,15 +32,32 @@ namespace TravelingSalesmanProblem.Presentation.WPF.ViewModels
         private DelegateCommand? stopCmd_;
 
         public DelegateCommand NewEnvCmd => newEnvCmd_ ??= new(() => appService_.SetEnv(PointCount));
-        public DelegateCommand SolveCmd => solveCmd_ ??= new(appService_.Run);
-        public DelegateCommand StopCmd => stopCmd_ ??= new(appService_.Stop);
+        public DelegateCommand SolveCmd => solveCmd_ ??= new(Solve);
+        public DelegateCommand StopCmd => stopCmd_ ??= new(Stop);
 
         #endregion BindingCommand
 
         internal MainWindowViewModel()
         {
             appService_.PointsChanged += (s, e) => Points = new(e.Points.Select(x => new Point(x.X, x.Y)));
-            appService_.BestRouteChanged += (s, e) => Route = new(e.BestRoute.Select(x => new Point(x.X, x.Y)));
+            appService_.BestRouteChanged += (s, e) =>
+            {
+                Route = new(e.BestRoute.Select(x => new Point(x.X, x.Y)));
+                TotalDistance = e.TotalDistance;
+                State = $"{e.TotalDistance}\n{State}";
+            };
+        }
+
+        private void Solve()
+        {
+            appService_.Run();
+            State = $"Finish!\n{State}";
+        }
+
+        private void Stop()
+        {
+            appService_.Stop();
+            State = $"Stop!\n{State}";
         }
 
         internal void OnContentRendered() => appService_.SetEnv(PointCount);

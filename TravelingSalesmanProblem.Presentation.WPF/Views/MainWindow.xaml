@@ -67,9 +67,9 @@
                 <RowDefinition Height="auto" />
             </Grid.RowDefinitions>
 
-            <Grid Grid.Row="0">
+            <StackPanel Grid.Row="0">
                 <TextBlock Text="{Binding State}"></TextBlock>
-            </Grid>
+            </StackPanel>
         </Grid>
     </Grid>
 </Window>

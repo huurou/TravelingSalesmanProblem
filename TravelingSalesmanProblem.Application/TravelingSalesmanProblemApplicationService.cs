@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using TravelingSalesmanProblem.Application.Events;
 using TravelingSalesmanProblem.Domain.Envs;
 using TravelingSalesmanProblem.Domain.Solvers;
@@ -20,12 +21,12 @@ namespace TravelingSalesmanProblem.Application
             solver_ = new AllSearchSolver();
 
             env_.PointsChanged += (s, e) => PointsChanged?.Invoke(this, new(new(e.Points.Select(x => new Point(x.X, x.Y)))));
-            solver_.BestRouteChanged += (s, e) => BestRouteChanged?.Invoke(this, new(new(e.BestRoute.Select(x => new Point(x.X, x.Y)))));
+            solver_.BestRouteChanged += (s, e) => BestRouteChanged?.Invoke(this, new(new(e.BestRoute.Select(x => new Point(x.X, x.Y))), e.TotalDistance));
         }
 
         public void SetEnv(int pointCount) => env_.Set(pointCount);
 
-        public void Run() => solver_.Solve(env_);
+        public async void Run() => await Task.Run(() => solver_.Solve(env_));
 
         public void Stop() => solver_.Stop();
     }

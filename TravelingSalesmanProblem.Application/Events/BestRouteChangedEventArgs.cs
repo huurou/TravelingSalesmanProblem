@@ -7,7 +7,12 @@ namespace TravelingSalesmanProblem.Application.Events
     public class BestRouteChangedEventArgs : EventArgs
     {
         public List<Point> BestRoute { get; }
+        public double TotalDistance { get; }
 
-        public BestRouteChangedEventArgs(List<Point> bestRoute) => BestRoute = bestRoute;
+        public BestRouteChangedEventArgs(List<Point> bestRoute, double totalDistance)
+        {
+            BestRoute = bestRoute;
+            TotalDistance = totalDistance;
+        }
     }
 }
